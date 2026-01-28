@@ -2,19 +2,16 @@
 
 A real-time ASL (American Sign Language) recognition project that makes learning sign language fun and interactive. Watch as your hand signs come to life on screen, with letters automatically connecting when they form real words!
 
+![Bubbly Demo](./images/demo.png)
+
 ## Inspiration
 
 Bubbly was born from a desire to appreciate non-verbal language and create an entertaining way to learn something new. By combining technology with education, Bubbly transforms ASL practice into an engaging, visual experience that celebrates the beauty of sign language.
 
 ## What It Does
 
-Bubbly uses your webcam to track your right hand in real-time and recognizes ASL finger-spelled letters. As you sign, letters appear on screen, and here's where the magic happens: when the letters you've signed form actual words or word prefixes, they automatically connect together visually, creating a satisfying and educational feedback loop.
-
-This visual connection system helps learners:
-- See immediate feedback on their signing
-- Understand word formation in a unique, interactive way
-- Stay motivated through gamified visual rewards
-- Practice ASL in a low-pressure, fun environment
+Bubbly uses your webcam to track your right hand in real-time and recognizes ASL finger-spelled letters. As you sign, letters appear on screen. When the letters you've signed form actual words or word prefixes, they automatically connect together visually, creating a satisfying and educational feedback loop.
+This visual connection system helps learners to see immediate feedback on their signing, improve awareness of specific gestures and angles, and understand word formation in a unique, interactive way.
 
 ## Tech Stack
 
@@ -29,15 +26,13 @@ This visual connection system helps learners:
 - **Visual Connections** - Letters dynamically connect on screen when they form meaningful combinations
 - **Educational & Entertaining** - Learn ASL through interactive, visual feedback
 
-## Prerequisites
-
-- A modern web browser (Chrome, Firefox, or Edge recommended)
-- Webcam access
-- Good lighting for optimal hand tracking
-
-TODO: installation
 ## Demo (Stage 1)
 Visit https://youtu.be/7ZiGdUQ6UsY for a demo on the first version of this program
+
+## Prerequisites
+To play with this program, you will need a  modern web browser, webcam access, and preferably good lighting for optimal hand tracking.
+
+TODO: installation
 
 ## How to Use
 
@@ -57,4 +52,4 @@ Visit https://youtu.be/7ZiGdUQ6UsY for a demo on the first version of this progr
 
 ---
 
-Made with 💙 to celebrate the beauty of sign language
+Hope you enjoy a little game of sign language!
