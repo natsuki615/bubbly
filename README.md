@@ -29,7 +29,7 @@ This visual connection system helps learners to see immediate feedback on their 
 ## Demo (Stage 1)
 Visit https://youtu.be/7ZiGdUQ6UsY for a demo on the first version of this program
 
-## Demo (Stage 1 - Image)
+## Demo (Stage 2 - Image)
 ![Bubbly Demo](./images/demo2.png)
 
 ## Prerequisites
