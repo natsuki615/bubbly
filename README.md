@@ -2,7 +2,7 @@
 
 A real-time ASL (American Sign Language) recognition project that makes learning sign language fun and interactive. Watch as your hand signs come to life on screen, with letters automatically connecting when they form real words!
 
-![Bubbly Demo](./images/demo.png)
+![Bubbly Demo](./images/image.png)
 
 ## Inspiration
 
