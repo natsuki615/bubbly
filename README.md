@@ -29,6 +29,9 @@ This visual connection system helps learners to see immediate feedback on their 
 ## Demo (Stage 1)
 Visit https://youtu.be/7ZiGdUQ6UsY for a demo on the first version of this program
 
+## Demo (Stage 1 - Image)
+![Bubbly Demo](./images/demo2.png)
+
 ## Prerequisites
 To play with this program, you will need a  modern web browser, webcam access, and preferably good lighting for optimal hand tracking.
 
