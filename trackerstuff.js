@@ -87,6 +87,7 @@ async function preloadTracker() {
     console.warn = origWarn;
     console.error = origError;
   }
+  print("Tracker initialization complete.");
 }
 
 //------------------------------------------
