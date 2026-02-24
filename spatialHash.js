@@ -1,9 +1,8 @@
-// spatial Hash for efficient proximity queries
 class SpatialHash {
     constructor(cellSize = 50) {
         this.cellSize = cellSize;
-        this.grid = new Map(); // key: "x,y" -> value: array of particle indices
-        this.particlePositions = []; // parallel array of particle positions
+        this.grid = new Map(); 
+        this.particlePositions = []; 
     }
     
     clear() {
@@ -11,7 +10,6 @@ class SpatialHash {
         this.particlePositions = [];
     }
     
-    // add a particle with its position
     insert(index, x, y) {
         this.particlePositions[index] = [x, y];
         
@@ -25,8 +23,7 @@ class SpatialHash {
         this.grid.get(key).push(index);
     }
     
-    // get all particles within a certain distance of a point
-    getNearby(x, y, radius) {
+    findNeighbors(x, y, radius) {
         const results = [];
         
         const minCellX = Math.floor((x - radius) / this.cellSize);
@@ -50,12 +47,10 @@ class SpatialHash {
                 }
             }
         }
-        
         return results;
     }
     
-    // get particles in a specific cell
-    getCell(x, y) {
+    getParticleInCell(x, y) {
         const cellX = Math.floor(x / this.cellSize);
         const cellY = Math.floor(y / this.cellSize);
         const key = `${cellX},${cellY}`;

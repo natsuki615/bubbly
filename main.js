@@ -34,14 +34,7 @@ let words = [];
 
 const LABELS = "abcdefghijklmnopqrstuvwxyz".split("");
 
-const Engine = Matter.Engine,
-      World = Matter.World,
-      Bodies = Matter.Bodies,
-	  Constraint = Matter.Constraint;
-
-let engine;
-let world;
-let seeds = [];
+let grid = new SpatialHash(); // you can define cellSize
 
 // delaunay triangulation
 // let framesSinceTriangulation = 0;
@@ -55,32 +48,34 @@ const LLOYD_STRENGTH = 0.005; // pull toward centroid (0-1)
 const LLOYD_UPDATE_FRAMES = 12;
 let framesSinceLloyd = 0;
 
+// spring constant
+let K = 0.1;
 
 class Word {
 	constructor(letterArray){
 		this.letters = letterArray; 
 		this.suffix = null; 
-		// this.constraints = [];
+		this.neighbors = [];
+		[this.x, this.y] = this.getCenter();
 
 		for (let l of this.letters){
 			l.partOfWord = this;
 		}
-		for (let i = 0; i < this.letters.length-1; i++) {
-			let constraint = Constraint.create({
-				bodyA: this.letters[i].body,
-				bodyB: this.letters[i+1].body,
-				length: this.letters[i].s*1.5,
-				stiffness: 0.5,
-				damping: 0.1
-			});
-			World.add(world, constraint);
-			// this.constraints.push(constraint);
-			this.letters[i].constraints.push(constraint);
-			this.letters[i+1].constraints.push(constraint);
-		}
 		this.updateSuffix();
 	}
 	
+	getCenter() {
+		let sumX = 0;
+		let sumY = 0; 
+		for (let l of this.letters) {
+			sumX += l.pos.x;
+			sumY += l.pos.y;
+		}
+		let cx = sumX / this.letters.length;
+		let cy = sumY / this.letters.length;
+		return [cx, cy];
+	}
+
 	updateSuffix(){
 		if (!wordTrie) return;
 		let curr = wordTrie;
@@ -113,48 +108,63 @@ class Word {
 			strokeWeight(1);
 		}
 		for (let i = 0; i < this.letters.length-1; i++){
-			let pos1 = this.letters[i].body.position;
-			let pos2 = this.letters[i + 1].body.position;
-			line(pos1.x, pos1.y, pos2.x, pos2.y);
-			this.letters[i].show();
+			let curr = this.letters[i];
+			let next = this.letters[i+1];
+			curr.show();
+			this.updateSpring(curr, next);
 		}
 		this.letters[this.letters.length-1].show();
+		
 	}
-	
-	tryExtend(){
-		// right now words don't extend after they're created
-
+	getNeighborWords() {
+		// TODO: if there are 3(a limit) combos of the same letters, merge them hehe
+		let raw = grid.findNeighbors(this.x, this.y, grid.cellSize);
+		for (let r of raw) {
+			let other = letters[r.index];
+			if (other !== this) {
+				this.neighbors.push(other);
+			}
+		}
+	}
+	tryExtend() {
 		if (!this.suffix) return;
 		let lastLetter = this.letters[this.letters.length-1];
 		for (let n of lastLetter.neighbors){
-			if (n.partOfWord) continue;
-			if (n.l in this.suffix){
+			if (n.partOfWord) {
+				// TODO: does the two parts combine?
+				// make new word object, 
+				// rebuild constraints,
+				// update suffix,
+				// remove the old word from words[]
+				return;
+			} else if (n.l in this.suffix){
 				this.letters.push(n);
 				n.partOfWord = this;
-
-				let constraint = Constraint.create({
-					bodyA: lastLetter.body,
-					bodyB: n.body,
-					length: lastLetter.s * 1.5,
-					stiffness: 0.5,
-					damping: 0.1
-				});
-				World.add(world, constraint);
-				
-				lastLetter.constraints.push(constraint);
-				n.constraints.push(constraint);
-
 				this.updateSuffix();
 				return;
 			}
 		}
+	}
+
+	updateSpring(curr, next) {
+		let force = p5.Vector.sub(next.pos, curr.pos);
+		let dist = force.mag();
+		let restlen = 40;
+		let stretch = dist - restlen;
+		force.normalize();
+		if (dist < 50) {
+			force.mult(-K*stretch);
+		}
+		curr.applyForce(force);
+		next.applyForce(p5.Vector.mult(force, -1));
+		line(curr.pos.x, curr.pos.y, next.pos.x, next.pos.y);
 	}
 }
 
 // cpu based particle class for free letters
 class Letter {
 	constructor(x, y, label, size) {
-		this.label = label;
+		this.l = label;
 		this.size = size;
 		this.pos = createVector(x, y);
 		this.vel = createVector(0, 0);
@@ -162,7 +172,7 @@ class Letter {
 
 		this.neighbors = []; 
 		this.connectedTo = null; 
-		this.partOfWord = null; 
+		this.partOfWord = null;  // this is a word object
 	}
 	
 	applyForce(force) {
@@ -178,23 +188,21 @@ class Letter {
 		let wander = p5.Vector.fromAngle(angle).mult(0.2);
 		this.applyForce(wander);
 		
-		// density based repulsion
-		for (let other of letters) {
-			if (other === this) continue;
-			let d = dist(this.pos.x, this.pos.y, other.pos.x, other.pos.y);
-			let minDist = (this.size + other.size) * 1.5;
-			if (d < minDist * 3) {
+		// density based repulsion using spatial hash!
+		if (this.neighbors.length > 20) { // more than 20 cells are within 100 pixels
+			for (let other of this.neighbors) {
 				let force = p5.Vector.sub(this.pos, other.pos);
 				force.normalize();
-				force.mult(0.05 / (d + 1));
+				force.mult(0.01);
 				this.applyForce(force);
 			}
 		}
+
 		// TODO: revisit forces and computation
 		
 		// physics integration
 		this.vel.add(this.acc);
-		this.vel.mult(0.97); // damping
+		this.vel.mult(0.95); // damping
 		this.pos.add(this.vel);
 		this.acc.mult(0);
 		
@@ -211,15 +219,47 @@ class Letter {
 		fill("#23f758");
 		noStroke();
 		textSize(this.size);
-		text(this.label, 0, 0);
+		text(this.l, 0, 0);
 		pop();
 	}
 	getNeighbors() {
-		// TODO: use spatial hashing here fo efficiency
+		// use spatial hashing for efficiency
+		this.neighbors = [];
+		let raw = grid.findNeighbors(this.pos.x, this.pos.y, grid.cellSize);
+		for (let r of raw) {
+			let other = letters[r.index];
+			if (other !== this) {
+				this.neighbors.push(other);
+			}
+		}
+		// TODO: if letters are wrapping around the screen
+		// make sure they aren't neighbors!
 	}
-	checkWordConnection(wordTrie) {
-		// TODO: go through this.neighbors and connect
-		
+	combine() {
+		let thisTrie = wordTrie[this.l];
+		for (let i = 0; i < this.neighbors.length; i++) {
+			let n = this.neighbors[i];
+			if (!this.partOfWord && !n.partOfWord) {
+				if (thisTrie && n.l in thisTrie) {
+					let newWord = new Word([this, n]);
+					words.push(newWord);
+					this.partOfWord = newWord;
+					n.partOfWord = newWord;
+					print("combining " + this.l + " and " + n.l);
+					return;
+				} 
+				// other direction
+				let nTrie = wordTrie[n.l];
+				if (nTrie && this.l in nTrie) {
+					let newWord = new Word([n, this]);
+					words.push(newWord);
+					this.partOfWord = newWord;
+					n.partOfWord = newWord;
+					print("combining " + n.l + " and " + this.l);
+					return;
+				}
+			}
+		}
 	}
 }
 
@@ -269,7 +309,7 @@ function applyLloydRelaxation() {
 		if (word.letters.length < 2) continue;
 		
 		// voronoi diagram for just letters in a word
-		const wordPoints = word.letters.map(l => [l.body.position.x, l.body.position.y]);
+		const wordPoints = word.letters.map(l => [l.pos.x, l.pos.y]);
 		const wordDelaunay = d3.Delaunay.from(wordPoints);
 		const wordVoronoi = wordDelaunay.voronoi([0, 0, width, height]);
 		
@@ -291,11 +331,11 @@ function applyLloydRelaxation() {
 			centroidY /= cellPolygon.length;
 			
 			// apply force toward centroid
-			const dx = centroidX - letter.body.position.x;
-			const dy = centroidY - letter.body.position.y;
+			const dx = centroidX - letter.pos.x;
+			const dy = centroidY - letter.pos.y;
 			
-			letter.body.velocity.x += dx * LLOYD_STRENGTH;
-			letter.body.velocity.y += dy * LLOYD_STRENGTH;
+			letter.vel.x += dx * LLOYD_STRENGTH;
+			letter.vel.y += dy * LLOYD_STRENGTH;
 		}
 	}
 }
@@ -323,29 +363,38 @@ function draw() {
 	}
 
 	// clean up invalid words (the lines after letters are destroyed)
-	for (let i = words.length - 1; i >= 0; i--) {
-		let word = words[i];
-		let hasDestroyedLetter = false;
-		for (let letter of word.letters) {
-			if (!letters.includes(letter)) {
-				hasDestroyedLetter = true;
-				break;
-			}
-		}
-		if (hasDestroyedLetter) {
-			for (let letter of word.letters) {
-				if (letters.includes(letter)) {
-					letter.partOfWord = null;
-				}
-			}
-			words.splice(i, 1);
-		}
-	}
+	// for (let i = words.length - 1; i >= 0; i--) {
+	// 	let word = words[i];
+	// 	let hasDestroyedLetter = false;
+	// 	for (let letter of word.letters) {
+	// 		if (!letters.includes(letter)) {
+	// 			hasDestroyedLetter = true;
+	// 			break;
+	// 		}
+	// 	}
+	// 	if (hasDestroyedLetter) {
+	// 		for (let letter of word.letters) {
+	// 			if (letters.includes(letter)) {
+	// 				letter.partOfWord = null;
+	// 			}
+	// 		}
+	// 		words.splice(i, 1);
+	// 	}
+	// }
 
+	print(letters.length);
 	for (let p of letters) {
 		p.update();
 		p.show();
-		p.checkWordConnection(wordTrie);
+	}
+	grid.clear();
+	for (let i = 0; i < letters.length; i++) {
+		let p = letters[i];
+		grid.insert(i, p.pos.x, p.pos.y);
+	}
+	for (let p of letters) {
+		p.getNeighbors();
+		p.combine();
 	}
 	
 	// lloyd relaxation to word letters
@@ -354,10 +403,13 @@ function draw() {
 		applyLloydRelaxation();
 		framesSinceLloyd = 0;
 	}
+
+	// print(words);
 	
 	for (let w of words) {
-		w.tryExtend();
+		// w.tryExtend();
 		w.show();
+		w.getNeighborWords();
 	}
 
 	// ------------ DRAW TRIANGLES ------------
@@ -366,9 +418,9 @@ function draw() {
 	// 	strokeWeight(1);
 	// 	const triangles = delaunay.triangles;
 	// 	for (let i = 0; i < triangles.length; i += 3) {
-	// 		const p1 = letters[triangles[i]].body.position;
-	// 		const p2 = letters[triangles[i + 1]].body.position;
-	// 		const p3 = letters[triangles[i + 2]].body.position;
+	// 		const p1 = letters[triangles[i]].pos;
+	// 		const p2 = letters[triangles[i + 1]].pos;
+	// 		const p3 = letters[triangles[i + 2]].pos;
 			
 	// 		line(p1.x, p1.y, p2.x, p2.y);
 	// 		line(p2.x, p2.y, p3.x, p3.y);

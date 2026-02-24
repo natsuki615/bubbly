@@ -117,7 +117,7 @@ async function predictGesture(features) {
 	const predArray = await prediction.array();
 	const maxIdx = predArray[0].indexOf(Math.max(...predArray[0]));
 	currentLabel = LABELS[maxIdx];
-	if (letters.length > 200) {
+	if (letters.length > 1000) {
 		letters.splice(0, 1);
 	}
 	let palmX = random(width);
