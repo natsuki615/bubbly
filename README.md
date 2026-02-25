@@ -37,7 +37,10 @@ This creates richer, more performant force interactions between letters, making 
 Each letter bubble is now influenced by a Perlin noise field, giving them organic, flowing movement rather than static or purely physics-driven behavior.
 
 <!-- <img src="./assets/noise.gif" alt="Bubbly Demo" width="100%"> -->
-<video src="./assets/noise.mp4" controls></video>
+<!-- <video src="./assets/noise.mp4" controls></video> -->
+
+https://github.com/user-attachments/assets/439fe68c-aef5-4a77-8a4a-034ad1e3e814
+
 
 ### Density-Based Force
 
@@ -53,7 +56,10 @@ https://github.com/user-attachments/assets/9a5e6aeb-6209-4aec-b93b-e273fe27b521
 
 If too many of the same word crowd together, they merge into one. This feature is still being implementated, as you can see the merge direction isn't correct
 
-<video src="./assets/weird.mp4" controls></video>
+<!-- <video src="./assets/weird.mp4" controls></video> -->
+
+https://github.com/user-attachments/assets/5c818486-04da-464a-bb6b-335f25e0b09f
+
 
 ## Tech Stack
 
