@@ -2,7 +2,10 @@
 
 A real-time interactive game that leverages an ASL (American Sign Language) recognition model to form words. Watch as your hand signs come to life on screen, with letters automatically connecting when they form real words!
 
-![Bubbly Demo](./assets/intro.gif)
+<!-- <img src="./assets/intro.gif" alt="Bubbly Demo" width="100%"> -->
+<video controls width="100%" height="100%">
+    <source src="./assets/intro.mp4" type="video/mp4">
+</video>
 
 <!-- ## Inspiration
 
@@ -13,6 +16,14 @@ Bubbly was born from a desire to appreciate non-verbal language and create an en
 Bubbly uses your webcam to track your right hand in real-time and recognizes ASL finger-spelled letters. As you sign, letters appear on screen. When the letters you've signed form actual words or word prefixes, they automatically connect together visually, creating a satisfying and educational feedback loop.
 This visual connection system helps learners to see immediate feedback on their signing, improve awareness of specific gestures and angles, and understand word formation in a unique, interactive way.
 
+### Letters Can Form Words
+
+When signed letters are spatially close and spell a valid word, they visually snap together.
+
+<!-- <img src="./assets/make_words.gif" alt="Bubbly Demo" width="100%"> -->
+<video controls>
+    <source src="./assets/make_words.mp4" type="video/mp4">
+</video>
 
 ## Experiment — February 25, 2026
 
@@ -24,19 +35,27 @@ This creates richer, more performant force interactions between letters, making 
 
 Each letter bubble is now influenced by a Perlin noise field, giving them organic, flowing movement rather than static or purely physics-driven behavior.
 
-![Noise Force](./assets/noise.gif)
+<!-- <img src="./assets/noise.gif" alt="Bubbly Demo" width="100%"> -->
+<video controls>
+    <source src="./assets/noise.mp4" type="video/mp4">
+</video>
 
 ### Density-Based Force
 
-Bubbles now respond to local density: when too many letters crowd together, repulsive forces push them apart.
+Letters now respond to local density: when too many letters crowd together, repulsive forces push them apart.
 
-![Density Force](./assets/density.gif)
+<!-- <img src="./assets/density.gif" alt="Bubbly Demo" width="100%"> -->
+<video controls>
+    <source src="./assets/density.mp4" type="video/mp4">
+</video>
 
-### Letters Can Form Words
+### Merge(Weird) Force
 
-When signed letters are spatially close and spell a valid word, they visually snap together.
+If too many of the same word crowd together, they merge into one. This feature is still being implementated, as you can see the merge direction isn't correct
 
-![Word Formation](./assets/make_words.gif)
+<video controls>
+    <source src="./assets/weird.mp4" type="video/mp4">
+</video>
 
 ## Tech Stack
 
