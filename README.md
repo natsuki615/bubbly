@@ -58,7 +58,7 @@ If too many of the same word crowd together, they merge into one. This feature i
 
 <!-- <video src="./assets/weird.mp4" controls></video> -->
 
-https://github.com/user-attachments/assets/5c818486-04da-464a-bb6b-335f25e0b09f
+https://github.com/user-attachments/assets/b492d882-268e-4db3-ab0a-6d7f765d466d
 
 
 ## Tech Stack
