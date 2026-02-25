@@ -3,7 +3,9 @@
 A real-time interactive game that leverages an ASL (American Sign Language) recognition model to form words. Watch as your hand signs come to life on screen, with letters automatically connecting when they form real words!
 
 <!-- <img src="./assets/intro.gif" alt="Bubbly Demo" width="100%"> -->
-<video src="./assets/intro.mp4" controls></video>
+<!-- <video src="./assets/intro.mp4" controls></video> -->
+https://github.com/user-attachments/assets/67ce416a-1a92-4e97-8113-01cd1445976a
+
 
 <!-- ## Inspiration
 
@@ -19,7 +21,10 @@ This visual connection system helps learners to see immediate feedback on their 
 When signed letters are spatially close and spell a valid word, they visually snap together.
 
 <!-- <img src="./assets/make_words.gif" alt="Bubbly Demo" width="100%"> -->
-<video src="./assets/make_words.mp4" controls></video>
+<!-- <video src="./assets/make_words.mp4" controls></video> -->
+
+https://github.com/user-attachments/assets/fabae53b-7e63-46bb-afb6-b05715244406
+
 
 ## Experiment — February 25, 2026
 
@@ -39,7 +44,10 @@ Each letter bubble is now influenced by a Perlin noise field, giving them organi
 Letters now respond to local density: when too many letters crowd together, repulsive forces push them apart.
 
 <!-- <img src="./assets/density.gif" alt="Bubbly Demo" width="100%"> -->
-<video src="./assets/density.mp4" controls></video>
+<!-- <video src="./assets/density.mp4" controls></video> -->
+
+https://github.com/user-attachments/assets/9a5e6aeb-6209-4aec-b93b-e273fe27b521
+
 
 ### Merge(Weird) Force
 
