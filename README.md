@@ -60,6 +60,8 @@ If too many of the same word crowd together, they merge into one. This feature i
 
 https://github.com/user-attachments/assets/b492d882-268e-4db3-ab0a-6d7f765d466d
 
+## Learning Curves
+For this project, I also spent a lot of time looking into data visualization techniques such as Delauray triangulation and Vonoroi diagram, as well as particle simulation which involves GPU programming and texture manipulation. These were difficult ideas to wrap my head around, and my first attempt in implementing these features wasn't super successful. However I think these are important skills to have as I scale up my project in the future, especially for force calculations on the letters. 
 
 ## Tech Stack
 
@@ -98,7 +100,6 @@ To play with this program, you will need a  modern web browser, webcam access, a
 - Improve recognition accuracy
 - Expand vocabulary recognition
 - Implement custom word-based or letter-based forces
-- 
 
 
 ---
