@@ -55,19 +55,22 @@ class Word {
 	constructor(letterArray){
 		this.letters = letterArray; 
 		this.suffix = null; 
-		this.neighbors = [];
-		[this.x, this.y] = this.getCenter();
-
+		this.letter_neighbors = [];
+		this.word_neighbors = [];
+		[this.x, this.y] = this.getCenter(this.letters);
+		this.pos = createVector(this.x, this.y);
 		for (let l of this.letters){
 			l.partOfWord = this;
 		}
 		this.updateSuffix();
+
+		// TODO: words dont go off screen but instead wobble in their own position?
 	}
 	
-	getCenter() {
+	getCenter(arr) {
 		let sumX = 0;
 		let sumY = 0; 
-		for (let l of this.letters) {
+		for (let l of arr) {
 			sumX += l.pos.x;
 			sumY += l.pos.y;
 		}
@@ -100,32 +103,86 @@ class Word {
 	
 	show(){
 		noFill();
+		let bgColor = null;
 		if (this.isComplete()){
 			stroke("#ffff00"); 
-			strokeWeight(4);
+			bgColor = color(255, 255, 0);
+			strokeWeight(3);
 		} else {
 			stroke("#23f758");
+			bgColor = color(15, 153, 49, 80);
 			strokeWeight(1);
 		}
 		for (let i = 0; i < this.letters.length-1; i++){
 			let curr = this.letters[i];
 			let next = this.letters[i+1];
-			curr.show();
+			curr.highlight = true;
+			curr.show(bgColor);
 			this.updateSpring(curr, next);
 		}
-		this.letters[this.letters.length-1].show();
-		
+		this.letters[this.letters.length-1].show(bgColor);
 	}
+
 	getNeighborWords() {
-		// TODO: if there are 3(a limit) combos of the same letters, merge them hehe
+		this.word_neighbors = [];
 		let raw = grid.findNeighbors(this.x, this.y, grid.cellSize);
 		for (let r of raw) {
-			let other = letters[r.index];
-			if (other !== this) {
-				this.neighbors.push(other);
+			let letter = letters[r.index];
+			if (letter.partOfWord && letter.partOfWord !== this) {
+				let otherWord = letter.partOfWord;
+
+				if (!this.word_neighbors.includes(otherWord)) {
+					this.word_neighbors.push(otherWord);
+				}
 			}
 		}
+		// print("word neighbor length: " + this.word_neighbors.length);
+		let count = 0;
+		let merge = [];
+		for (let n of this.word_neighbors) {
+			if (n.getText() == this.getText()) {
+				// print("has dups");
+				count++;
+				merge.push(n);
+			}
+		}
+		if (count > 2) {
+			let [cx, cy] = this.getCenter(merge);
+			let target = createVector(cx, cy);
+			this.mergeWords(merge, target);
+		}
+		merge = [];
 	}
+
+	mergeWords(wordsArr, target) {
+		// TODO: fix merging force(rn they all go towards the bottom right corner)
+		print("MERGE WORDS");
+		let isClose = false;
+		for (let w of wordsArr) {
+			for (let l of w.letters) {
+				let curr = l.pos;
+				let force = p5.Vector.sub(target, curr);
+				let dist = force.mag();
+
+				if (dist < 10) {isClose = true};
+
+				force.normalize(); // now this is just direction of the force
+				let k = 0.05;
+				force.mult(k*dist);
+				l.applyForce(force);
+			}
+		}
+		if (isClose) {
+			for (let w of wordsArr) {
+				let idx = words.indexOf(w);
+				if (idx !== -1) {
+					words.splice(idx, 1);
+				}
+			}
+		}
+		// TODO: increase word size
+	}
+
 	tryExtend() {
 		if (!this.suffix) return;
 		let lastLetter = this.letters[this.letters.length-1];
@@ -173,6 +230,7 @@ class Letter {
 		this.neighbors = []; 
 		this.connectedTo = null; 
 		this.partOfWord = null;  // this is a word object
+		this.highlight = false;
 	}
 	
 	applyForce(force) {
@@ -189,11 +247,11 @@ class Letter {
 		this.applyForce(wander);
 		
 		// density based repulsion using spatial hash!
-		if (this.neighbors.length > 20) { // more than 20 cells are within 100 pixels
+		if (this.neighbors.length > 10) { // more than 20 cells are within 100 pixels
 			for (let other of this.neighbors) {
 				let force = p5.Vector.sub(this.pos, other.pos);
 				force.normalize();
-				force.mult(0.01);
+				force.mult(0.01*this.size);
 				this.applyForce(force);
 			}
 		}
@@ -207,20 +265,37 @@ class Letter {
 		this.acc.mult(0);
 		
 		// boundary wrapping
-		if (this.pos.x < 0) this.pos.x = width;
-		if (this.pos.x > width) this.pos.x = 0;
-		if (this.pos.y < 0) this.pos.y = height;
-		if (this.pos.y > height) this.pos.y = 0;
+		// if (this.pos.x < 0) this.pos.x = width;
+		// if (this.pos.x > width) this.pos.x = 0;
+		// if (this.pos.y < 0) this.pos.y = height;
+		// if (this.pos.y > height) this.pos.y = 0;
 	}
 	
-	show() {
-		push();
-		translate(this.pos.x, this.pos.y);
-		fill("#23f758");
-		noStroke();
-		textSize(this.size);
-		text(this.l, 0, 0);
-		pop();
+	show(bgColor) {
+		if (this.highlight) {
+			push();
+			// translate(this.pos.x, this.pos.y);
+			fill(bgColor);
+			noStroke();
+			circle(this.pos.x, this.pos.y, this.size+10);
+			pop();
+
+			push();
+			translate(this.pos.x, this.pos.y);
+			fill("#000000");
+			noStroke();
+			textSize(this.size);
+			text(this.l, 0, 0);
+			pop();
+		} else {
+			push();
+			translate(this.pos.x, this.pos.y);
+			fill("#23f758");
+			noStroke();
+			textSize(this.size);
+			text(this.l, 0, 0);
+			pop();
+		}
 	}
 	getNeighbors() {
 		// use spatial hashing for efficiency
@@ -232,8 +307,6 @@ class Letter {
 				this.neighbors.push(other);
 			}
 		}
-		// TODO: if letters are wrapping around the screen
-		// make sure they aren't neighbors!
 	}
 	combine() {
 		let thisTrie = wordTrie[this.l];
@@ -245,7 +318,9 @@ class Letter {
 					words.push(newWord);
 					this.partOfWord = newWord;
 					n.partOfWord = newWord;
-					print("combining " + this.l + " and " + n.l);
+					this.highlight = true;
+					n.highlight = true;
+					// print("combining " + this.l + " and " + n.l);
 					return;
 				} 
 				// other direction
@@ -255,7 +330,9 @@ class Letter {
 					words.push(newWord);
 					this.partOfWord = newWord;
 					n.partOfWord = newWord;
-					print("combining " + n.l + " and " + this.l);
+					this.highlight = true;
+					n.highlight = true;
+					// print("combining " + n.l + " and " + this.l);
 					return;
 				}
 			}
@@ -286,18 +363,6 @@ async function setup() {
 	myCapture = createCapture(VIDEO);
 	myCapture.size(160,120); 
 	myCapture.hide();
-
-	engine = Engine.create();
-    world = engine.world;
-
-    let wallThickness = 20;
-
-	let ground = Bodies.rectangle(width/2, height, width, wallThickness, { isStatic: true });
-	let ceiling = Bodies.rectangle(width/2, 0, width, wallThickness, { isStatic: true });
-	let leftWall = Bodies.rectangle(0, height/2, wallThickness, height, { isStatic: true });
-	let rightWall = Bodies.rectangle(width, height/2, wallThickness, height, { isStatic: true });
-    World.add(world, [ground, ceiling, leftWall, rightWall]);
-	engine.world.gravity.y = -0.8;
 
 	await initiateTracking();
 	await loadASLModel();
@@ -345,7 +410,7 @@ function draw() {
 	// "#EB6534"
    	drawHandPoints();
 
-	Engine.update(engine);
+	// Engine.update(engine);
 
 	if (trackingConfig.doAcquireHandLandmarks) {
 		if (handLandmarks && handLandmarks.landmarks) {
@@ -382,10 +447,10 @@ function draw() {
 	// 	}
 	// }
 
-	print(letters.length);
+	// print(letters.length);
 	for (let p of letters) {
 		p.update();
-		p.show();
+		p.show("#23f758");
 	}
 	grid.clear();
 	for (let i = 0; i < letters.length; i++) {

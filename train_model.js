@@ -104,7 +104,11 @@ function onResults(results) {
 		features.push(obj.y);
 		// features.push(obj.z);
 	})	
-  	predictGesture(features);
+	// predict every 2 frames
+	if (frameCount % 2 === 0) {
+        predictGesture(features);
+    }
+	// predictGesture(features);
 }
 
 async function predictGesture(features) {
@@ -137,7 +141,7 @@ async function predictGesture(features) {
 			}
 		}
 	}
-	let letter_box_radius = random(5,20);
+	let letter_box_radius = random(10,20);
 	// Create a new free letter particle
 	let particle = new Letter(palmX, palmY, currentLabel, letter_box_radius);
 	letters.push(particle);
