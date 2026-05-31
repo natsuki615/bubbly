@@ -81,7 +81,7 @@ async function trainASLmodel() {
 	
 	//actual traininggggg!!!
 	await ASLmodel.fit(xsTensor, ysTensor, {
-		epochs: 10,
+		epochs: 15,
 		batchSize: 64,
 		callbacks: { 
 			onEpochEnd: (epoch, logs) => 

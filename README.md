@@ -5,10 +5,6 @@ A real-time interactive game that leverages an ASL (American Sign Language) reco
 <!-- <img src="./assets/intro.gif" alt="Bubbly Demo" width="100%"> -->
 <video src="./assets/intro.mp4" controls></video>
 
-<!-- ## Inspiration
-
-Bubbly was born from a desire to appreciate non-verbal language and create an entertaining way to learn something new. By combining technology with education, Bubbly transforms ASL practice into an engaging, visual experience that celebrates the beauty of sign language. -->
-
 ## What It Does
 
 Bubbly uses your webcam to track your right hand in real-time and recognizes ASL finger-spelled letters. As you sign, letters appear on screen. When the letters you've signed form actual words or word prefixes, they automatically connect together visually, creating a satisfying and educational feedback loop.
