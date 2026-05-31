@@ -3,7 +3,9 @@
 A real-time interactive game that leverages an ASL (American Sign Language) recognition model to form words. Watch as your hand signs come to life on screen, with letters automatically connecting when they form real words!
 
 <!-- <img src="./assets/intro.gif" alt="Bubbly Demo" width="100%"> -->
-<video src="./assets/intro.mp4" controls></video>
+<!-- <video src="./assets/intro.mp4" controls></video> -->
+https://github.com/user-attachments/assets/67ce416a-1a92-4e97-8113-01cd1445976a
+
 
 ## What It Does
 
@@ -15,7 +17,10 @@ This visual connection system helps learners to see immediate feedback on their 
 When signed letters are spatially close and spell a valid word, they visually snap together.
 
 <!-- <img src="./assets/make_words.gif" alt="Bubbly Demo" width="100%"> -->
-<video src="./assets/make_words.mp4" controls></video>
+<!-- <video src="./assets/make_words.mp4" controls></video> -->
+
+https://github.com/user-attachments/assets/fabae53b-7e63-46bb-afb6-b05715244406
+
 
 ## Experiment — February 25, 2026
 
@@ -28,20 +33,31 @@ This creates richer, more performant force interactions between letters, making 
 Each letter bubble is now influenced by a Perlin noise field, giving them organic, flowing movement rather than static or purely physics-driven behavior.
 
 <!-- <img src="./assets/noise.gif" alt="Bubbly Demo" width="100%"> -->
-<video src="./assets/noise.mp4" controls></video>
+<!-- <video src="./assets/noise.mp4" controls></video> -->
+
+https://github.com/user-attachments/assets/439fe68c-aef5-4a77-8a4a-034ad1e3e814
+
 
 ### Density-Based Force
 
 Letters now respond to local density: when too many letters crowd together, repulsive forces push them apart.
 
 <!-- <img src="./assets/density.gif" alt="Bubbly Demo" width="100%"> -->
-<video src="./assets/density.mp4" controls></video>
+<!-- <video src="./assets/density.mp4" controls></video> -->
+
+https://github.com/user-attachments/assets/9a5e6aeb-6209-4aec-b93b-e273fe27b521
+
 
 ### Merge(Weird) Force
 
 If too many of the same word crowd together, they merge into one. This feature is still being implementated, as you can see the merge direction isn't correct
 
-<video src="./assets/weird.mp4" controls></video>
+<!-- <video src="./assets/weird.mp4" controls></video> -->
+
+https://github.com/user-attachments/assets/b492d882-268e-4db3-ab0a-6d7f765d466d
+
+## Learning Curves
+For this project, I also spent a lot of time looking into data visualization techniques such as Delauray triangulation and Vonoroi diagram, as well as particle simulation which involves GPU programming and texture manipulation. These were difficult ideas to wrap my head around, and my first attempt in implementing these features wasn't super successful. However I think these are important skills to have as I scale up my project in the future, especially for force calculations on the letters. 
 
 ## Tech Stack
 
@@ -80,7 +96,6 @@ To play with this program, you will need a  modern web browser, webcam access, a
 - Improve recognition accuracy
 - Expand vocabulary recognition
 - Implement custom word-based or letter-based forces
-- 
 
 
 ---
